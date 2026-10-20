@@ -131,8 +131,84 @@
     }
   }
 
+  // Places and nature: a noise bed plus sparse synthesized events (drops, birds, cups, pages).
+  const placeDurations = { window: 12, river: 12, forest: 24, cafe: 24, library: 24 };
+
+  function createPlaceBuffer(context, kind) {
+    const rate = context.sampleRate;
+    const duration = placeDurations[kind];
+    const buffer = context.createBuffer(1, rate * duration, rate);
+    const data = buffer.getChannelData(0);
+    let brown = 0;
+    let pink = 0;
+    let low = 0;
+    const voices = [0, 1, 2].map(() => ({ rate: 3 + Math.random() * 2, phase: Math.random() * 6.28, drift: Math.random() * 6.28 }));
+
+    for (let i = 0; i < data.length; i++) {
+      const time = i / rate;
+      const white = Math.random() * 2 - 1;
+      brown = (brown + 0.02 * white) / 1.02;
+      pink = 0.97 * pink + white * 0.15;
+      low += 0.06 * (white - low);
+      if (kind === "window") data[i] = brown * 0.9 + pink * 0.18;
+      else if (kind === "river") data[i] = brown * 1.5 + pink * 0.4 * (0.75 + 0.25 * Math.sin(time * 2.3 + Math.sin(time * 0.7) * 2));
+      else if (kind === "forest") data[i] = brown * 1.1 * (0.6 + 0.4 * Math.sin(time * 0.5 + Math.sin(time * 0.13) * 2));
+      else if (kind === "cafe") {
+        const murmur = voices.reduce((sum, voice) => sum + Math.max(0, Math.sin(2 * Math.PI * voice.rate * time + voice.phase + Math.sin(time * 0.3 + voice.drift) * 3)), 0) / 3;
+        data[i] = brown * 0.9 + low * 0.9 * murmur;
+      } else data[i] = brown * 0.55 + pink * 0.05 + Math.sin(2 * Math.PI * 60 * time) * 0.006;
+    }
+
+    const at = (seconds) => Math.floor(seconds * rate);
+    const usable = duration - 0.6;
+    const addBurst = (start, length, level, color) => {
+      let previous = 0;
+      for (let i = 0; i < length && start + i < data.length; i++) {
+        const envelope = Math.sin(Math.PI * i / length) ** 2;
+        const noise = Math.random() * 2 - 1;
+        const sample = color === "bright" ? noise - previous : noise;
+        previous = noise;
+        data[start + i] += sample * envelope * level;
+      }
+    };
+    const addTone = (start, seconds, from, to, level, decay) => {
+      const length = at(seconds);
+      let phase = 0;
+      for (let i = 0; i < length && start + i < data.length; i++) {
+        const progress = i / length;
+        phase += 2 * Math.PI * (from + (to - from) * progress) / rate;
+        const envelope = decay ? Math.exp(-progress * decay) : Math.sin(Math.PI * progress);
+        data[start + i] += Math.sin(phase) * envelope * level;
+      }
+    };
+
+    if (kind === "window") {
+      for (let t = 0; t < usable; t += 0.02 + Math.random() * 0.09) addBurst(at(t), at(0.006 + Math.random() * 0.02), 0.04 + Math.random() * 0.16, "bright");
+      for (let t = 0.3; t < usable; t += 0.4 + Math.random() * 1.1) addTone(at(t), 0.04, 2400 + Math.random() * 1600, 2200, 0.025, 6);
+    } else if (kind === "river") {
+      for (let t = 0; t < usable; t += 0.08 + Math.random() * 0.25) addTone(at(t), 0.05, 380 + Math.random() * 700, 900 + Math.random() * 500, 0.018, 3);
+    } else if (kind === "forest") {
+      for (let t = 0.8; t < usable - 1; t += 1.6 + Math.random() * 3) {
+        const base = 2500 + Math.random() * 2000;
+        const notes = 2 + Math.floor(Math.random() * 4);
+        for (let n = 0; n < notes; n++) addTone(at(t + n * 0.16), 0.07 + Math.random() * 0.07, base, base + (Math.random() > 0.5 ? 650 : -500), 0.05, 0);
+      }
+    } else if (kind === "cafe") {
+      for (let t = 1; t < usable; t += 2 + Math.random() * 4) {
+        const pitch = 2800 + Math.random() * 1400;
+        addTone(at(t), 0.35, pitch, pitch, 0.03, 9);
+        addTone(at(t), 0.25, pitch * 2.7, pitch * 2.7, 0.012, 12);
+      }
+    } else if (kind === "library") {
+      for (let t = 3; t < usable - 1; t += 6 + Math.random() * 8) addBurst(at(t), at(0.22 + Math.random() * 0.12), 0.05, "bright");
+    }
+
+    return buffer;
+  }
+
   function createSoundBuffer(context, kind) {
     if (instrumentPatterns[kind]) return createInstrumentBuffer(context, kind);
+    if (placeDurations[kind]) return createPlaceBuffer(context, kind);
     return createNoiseBuffer(context, kind);
   }
 

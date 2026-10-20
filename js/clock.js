@@ -1,4 +1,5 @@
 (function () {
+  const t = (key, params) => window.StillApp.i18n.t(key, params);
   const timeElement = document.querySelector("#localTime");
   const dateElement = document.querySelector("#localDate");
   const flagElement = document.querySelector("#countryFlag");
@@ -12,13 +13,13 @@
   function updateClock() {
     const now = new Date();
     timeElement.dateTime = now.toISOString();
-    timeElement.textContent = new Intl.DateTimeFormat(undefined, {
+    timeElement.textContent = new Intl.DateTimeFormat(window.StillApp.i18n.intlLocale(), {
       hourCycle,
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit"
     }).format(now);
-    dateElement.textContent = new Intl.DateTimeFormat(undefined, {
+    dateElement.textContent = new Intl.DateTimeFormat(window.StillApp.i18n.intlLocale(), {
       weekday: "long",
       month: "long",
       day: "numeric",
@@ -46,15 +47,15 @@
   }
 
   function describeWeather(code, isDay) {
-    if (code === 0) return isDay ? "Clear skies" : "Clear night";
-    if ([1, 2].includes(code)) return "Mostly clear";
-    if (code === 3) return "Cloudy";
-    if ([45, 48].includes(code)) return "Foggy";
-    if ([51, 53, 55, 56, 57].includes(code)) return "Drizzle";
-    if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return "Rain";
-    if ([71, 73, 75, 77, 85, 86].includes(code)) return "Snow";
-    if ([95, 96, 99].includes(code)) return "Thunderstorms";
-    return "Current conditions";
+    if (code === 0) return t(isDay ? "weather.clear" : "weather.clearNight");
+    if ([1, 2].includes(code)) return t("weather.mostlyClear");
+    if (code === 3) return t("weather.cloudy");
+    if ([45, 48].includes(code)) return t("weather.fog");
+    if ([51, 53, 55, 56, 57].includes(code)) return t("weather.drizzle");
+    if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return t("weather.rain");
+    if ([71, 73, 75, 77, 85, 86].includes(code)) return t("weather.snow");
+    if ([95, 96, 99].includes(code)) return t("weather.storm");
+    return t("weather.current");
   }
 
   async function getLocationDetails(latitude, longitude) {
@@ -62,7 +63,7 @@
     url.search = new URLSearchParams({
       latitude: String(latitude),
       longitude: String(longitude),
-      localityLanguage: "en"
+      localityLanguage: window.StillApp.i18n.getLocale()
     });
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Location lookup failed (${response.status}).`);
@@ -84,7 +85,7 @@
 
   async function updateLocalConditions(position) {
     const { latitude, longitude } = position.coords;
-    locationStatus.textContent = "Checking your local conditions…";
+    locationStatus.textContent = t("clock.checking");
     const [placeResult, weatherResult] = await Promise.allSettled([
       getLocationDetails(latitude, longitude),
       getWeather(latitude, longitude)
@@ -96,7 +97,7 @@
       const country = place.countryName || "";
       const countryCode = place.countryCode;
       flagElement.textContent = flagFromCountryCode(countryCode);
-      locationElement.textContent = [city, country].filter(Boolean).join(", ") || "Local area";
+      locationElement.textContent = [city, country].filter(Boolean).join(", ") || t("clock.localArea");
     }
 
     if (weatherResult.status === "fulfilled") {
@@ -111,29 +112,29 @@
     if (failures.length) {
       failures.forEach((error) => console.error("Could not load a local condition:", error));
       locationStatus.textContent = weatherResult.status === "fulfilled"
-        ? "Weather is ready; place details could not be loaded."
-        : "Some local details could not be loaded. Try again later.";
+        ? t("clock.placeFailed")
+        : t("clock.someFailed");
     } else {
-      locationStatus.textContent = "Location is used only for these local details.";
+      locationStatus.textContent = t("clock.usedOnly");
     }
   }
 
   function requestLocation() {
     if (!navigator.geolocation) {
-      locationStatus.textContent = "Location is not available in this browser.";
+      locationStatus.textContent = t("clock.unavailable");
       return;
     }
 
-    locationStatus.textContent = "Waiting for browser location permission…";
+    locationStatus.textContent = t("clock.waiting");
     navigator.geolocation.getCurrentPosition(
       (position) => { void updateLocalConditions(position); },
       (error) => {
         const messages = {
-          1: "Location permission was not granted. You can allow it in browser settings.",
-          2: "Your location could not be determined. Try again when location is available.",
-          3: "Location request timed out. Try again."
+          1: t("clock.denied"),
+          2: t("clock.notDetermined"),
+          3: t("clock.timeout")
         };
-        locationStatus.textContent = messages[error.code] || "Could not access your location.";
+        locationStatus.textContent = messages[error.code] || t("clock.noAccess");
       },
       { enableHighAccuracy: false, maximumAge: 300000, timeout: 12000 }
     );
@@ -169,7 +170,12 @@
     getLocaleCountry();
     window.setInterval(updateClock, 1000);
     locationButton.addEventListener("click", requestLocation);
-    requestLocation();
+    window.StillApp.i18n.onChange(updateClock);
+    // Only look up weather automatically when the browser already granted location access,
+    // so the permission prompt never appears without a click.
+    navigator.permissions?.query({ name: "geolocation" })
+      .then((status) => { if (status.state === "granted") requestLocation(); })
+      .catch(() => {});
   }
 
   window.StillApp = window.StillApp || {};
