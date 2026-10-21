@@ -56,6 +56,11 @@ test("keeps weighted activities without a date but flags the missing date", () =
   assert.equal(items[0].confidence, "low");
 });
 
+test("drops a trailing 'entrega' (due) before the date from titles", () => {
+  const { items } = p.parseSyllabus([{ page: 1, text: "Taller 2 entrega 3 de noviembre de 2026" }], { referenceDate: REF });
+  assert.equal(items[0].title, "Taller 2");
+});
+
 test("does not invent items from ordinary prose or schedules", () => {
   const { items } = p.parseSyllabus([{ page: 1, text: "Office hours on Tuesday.\nWelcome to the course!\nRead chapter 2 before class." }], { referenceDate: REF });
   assert.equal(items.length, 0);

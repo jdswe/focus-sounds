@@ -180,7 +180,7 @@
     let title = line;
     removals.filter(Boolean).forEach((raw) => { title = title.replace(raw, " "); });
     return title
-      .replace(/\b(?:due|deadline|fecha(?: de entrega)?|entrega:|prazo|date|el|on|em|para el|para)\s*[:\-–]?\s*$/i, "")
+      .replace(/\b(?:due|deadline|fecha(?: de entrega)?|entrega|prazo|date|el|on|em|para el|para)\s*[:\-–]?\s*$/i, "")
       .replace(/^[\s•▪◦●\-–—*·|>]+|^\(?\d{1,2}[.)]\s+/g, "")
       .replace(/[\s:;,|\-–—()]+$/g, "")
       .replace(/\s{2,}/g, " ")

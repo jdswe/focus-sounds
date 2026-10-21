@@ -1,5 +1,8 @@
 /* Views added on top of the original liquid-glass design (styles.css). */
 
+/* Component display rules (grid/flex) must never override the hidden attribute. */
+[hidden] { display: none !important; }
+
 body { --field-bg: rgb(255 255 255 / 55%); --field-line: rgb(255 255 255 / 75%); --soft-line: color-mix(in srgb, var(--accent) 22%, transparent); --chip-bg: rgb(255 255 255 / 45%); --warn: #9A3B12; --ok: #2F6B3A; --companion-bg: color-mix(in srgb, var(--highlight) 45%, white); }
 
 /* ---------- Dark appearance: keeps each color mood's hue, swaps light glass for deep glass ---------- */

@@ -31,6 +31,7 @@
   let lastHeartbeat = 0;
   let statusKey = null;
   let finalizing = false;
+  let lastSummary = null;
 
   const prefs = () => app.store.app.get().preferences;
 
@@ -128,6 +129,7 @@
       now: Date.now()
     });
     el.summary.hidden = true;
+    lastSummary = null;
     setStatus(kind === "focus" ? (task ? "timer.status.focusTask" : "timer.status.focus") : "timer.status.break", { task: task?.title || "" });
     if (kind === "focus" && task && task.status !== "doing" && task.status !== "done") {
       app.store.app.update((state) => {
@@ -200,6 +202,7 @@
   }
 
   function showSummary(record) {
+    lastSummary = record;
     const task = taskById(record.taskId);
     const minutes = Math.round(record.activeSeconds / 60);
     el.summary.hidden = false;
@@ -223,6 +226,19 @@
     try { new Notification("Focus Sounds", { body: message, icon: "assets/favicon.svg", tag: "still-timer" }); } catch (error) { console.warn("Notification failed:", error); }
   }
 
+  // Refreshes only the heartbeat of the shared session, so a stale copy in this tab never
+  // overwrites a pause, resume or finish made in another tab.
+  function writeHeartbeat(now) {
+    const shared = readActive();
+    if (!shared.session || shared.session.id !== active.session?.id || !fs.isRunning(shared.session)) {
+      active = shared;
+      return;
+    }
+    shared.session = fs.heartbeat(shared.session, now);
+    active = shared;
+    writeActive();
+  }
+
   function tick() {
     const now = Date.now();
     const session = active.session;
@@ -231,8 +247,7 @@
       if (completeAt != null && now >= completeAt) { void finalize("completed"); return; }
       if (now - lastHeartbeat >= HEARTBEAT_MS) {
         lastHeartbeat = now;
-        active.session = fs.heartbeat(session, now);
-        writeActive();
+        writeHeartbeat(now);
       }
     }
     render();
@@ -323,10 +338,10 @@
       render();
     });
     window.addEventListener("pagehide", () => {
-      if (fs.isRunning(active.session)) { active.session = fs.heartbeat(active.session, Date.now()); writeActive(); }
+      if (fs.isRunning(active.session)) writeHeartbeat(Date.now());
     });
     app.store.app.subscribe(renderTaskOptions);
-    app.i18n.onChange(() => { renderTaskOptions(); render(); if (!el.summary.hidden) el.summary.hidden = true; });
+    app.i18n.onChange(() => { renderTaskOptions(); render(); if (!el.summary.hidden && lastSummary) showSummary(lastSummary); });
 
     window.setInterval(tick, 500);
     emitState();
