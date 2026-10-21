@@ -18,6 +18,10 @@
 
   const localZone = () => app.timezones.localTimeZone();
 
+  function supportedZone(zone) {
+    return app.timezones.PRESETS.some((entry) => entry.id === zone) ? zone : "America/La_Paz";
+  }
+
   function freshDraft() {
     const prefs = store().get().preferences;
     return {
@@ -30,7 +34,7 @@
       subjectChoice: "new",
       referenceDate: app.scheduler.formatLocalDate(Date.now()),
       dayFirst: app.i18n.getLocale() !== "en",
-      timeZone: prefs.importTimeZone || "America/La_Paz",
+      timeZone: supportedZone(prefs.importTimeZone),
       defaultTime: prefs.importDefaultTime || "",
       error: ""
     };
@@ -157,8 +161,6 @@
   }
 
   function renderSource(state) {
-    const zones = app.timezones.PRESETS.map((zone) => zone.id);
-    const customZone = !zones.includes(draft.timeZone) && draft.timeZone !== localZone();
     return `<form class="glass-panel pad import-form" data-import-source>
       <h3 class="card-title">${esc(t("import.step1"))}</h3>
       <div class="form-grid">
@@ -174,10 +176,7 @@
         <div class="form-grid">
           <label class="field"><span>${esc(t("import.sourceZone"))}</span><select name="timeZone">
             ${app.timezones.PRESETS.map((zone) => option(zone.id, zone.label, zone.id === draft.timeZone)).join("")}
-            ${option(localZone(), t("import.deviceZone", { zone: localZone() }), draft.timeZone === localZone() && !zones.includes(localZone()))}
-            ${option("custom", t("import.customZone"), customZone)}
           </select></label>
-          <label class="field" ${customZone ? "" : "hidden"} data-custom-zone><span>${esc(t("import.customZoneName"))}</span><input name="customZone" value="${esc(customZone ? draft.timeZone : "")}" placeholder="America/La_Paz"></label>
           <label class="field"><span>${esc(t("import.defaultTime"))}</span><input type="time" name="defaultTime" value="${esc(draft.defaultTime)}"><small class="muted-text">${esc(t("import.defaultTimeHelp"))}</small></label>
         </div>
       </fieldset>
@@ -273,7 +272,7 @@
     draft.subjectChoice = data.subjectChoice;
     draft.referenceDate = data.referenceDate || app.scheduler.formatLocalDate(Date.now());
     draft.dayFirst = data.dayFirst === "1";
-    draft.timeZone = data.timeZone === "custom" ? data.customZone.trim() : data.timeZone;
+    draft.timeZone = data.timeZone;
     draft.defaultTime = data.defaultTime;
     draft.error = "";
 
@@ -431,7 +430,7 @@
       size: doc.size,
       fingerprint: doc.fingerprint,
       sourceKind: doc.source,
-      timeZone: extraction.timeZone || doc.timeZone || "America/La_Paz",
+      timeZone: supportedZone(extraction.timeZone || doc.timeZone),
       subjectChoice: doc.subjectId,
       reopenDocumentId: doc.id,
       reopenExtractionId: extraction.id,
@@ -456,10 +455,6 @@
     });
     root().addEventListener("change", (event) => {
       const target = event.target;
-      if (target.name === "timeZone") {
-        root().querySelector("[data-custom-zone]").hidden = target.value !== "custom";
-        return;
-      }
       if (target.name === "file" && target.files[0] && !root().querySelector('[name="docName"]').value) {
         root().querySelector('[name="docName"]').value = target.files[0].name;
         return;

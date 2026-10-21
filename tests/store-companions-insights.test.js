@@ -79,8 +79,16 @@ test("outfits equip only compatible, unlocked pieces", () => {
   const result = companions.equipOutfit({ eyes: "round-glasses" }, "coffee-region", "capybara", lockedCounters);
   assert.deepEqual(result.equipped, { eyes: "round-glasses", body: "ruana", hand: "coffee-cup" });
   assert.deepEqual(result.skipped, ["aguadeno-hat"]);
-  const generic = companions.equipOutfit({}, "study-day", "alpaca", lockedCounters);
-  assert.equal(generic.equipped.hand, undefined, "alpacas have no hand slot");
+  const generic = companions.equipOutfit({}, "study-day", "llama", lockedCounters);
+  assert.equal(generic.equipped.hand, undefined, "llamas have no hand slot");
+});
+
+test("companions come only from Colombia, Mexico, Argentina, Brazil and Bolivia", () => {
+  assert.deepEqual(companions.SPECIES.map((species) => species.country).sort(), ["AR", "BO", "BR", "CO", "MX"]);
+});
+
+test("an unknown saved species falls back to the capybara", () => {
+  assert.equal(companions.getSpecies("alpaca").id, "capybara");
 });
 
 test("every species has at least three cultural items and one default item", () => {

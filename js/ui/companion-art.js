@@ -64,23 +64,6 @@
         ${eyes([[74, 76], [126, 76]], 5)}${blush([[62, 90], [138, 90]])}`,
       paw: `<ellipse cx="130" cy="152" rx="6" ry="6" fill="#F4A6C0" stroke="#D97A9A" stroke-width="1.5"/>`
     },
-    alpaca: {
-      anchors: { head: [100, 38, 0.58], eyes: [100, 60, 0.46], ears: [100, 58, 0.6], neck: [100, 104, 0.62], back: [100, 140, 0.9], lap: [52, 176, 0.7] },
-      body: `
-        <rect x="66" y="156" width="12" height="26" rx="5" fill="#EADBC4" stroke="#BFA88A" stroke-width="1.5"/><rect x="88" y="160" width="12" height="22" rx="5" fill="#EADBC4" stroke="#BFA88A" stroke-width="1.5"/>
-        <rect x="104" y="160" width="12" height="22" rx="5" fill="#EADBC4" stroke="#BFA88A" stroke-width="1.5"/><rect x="124" y="156" width="12" height="26" rx="5" fill="#EADBC4" stroke="#BFA88A" stroke-width="1.5"/>
-        <circle cx="154" cy="138" r="9" fill="#F5EBDD" stroke="#C9B497" stroke-width="1.5"/>
-        <path d="M48 150q-4-24 18-26q6-10 18-6q10-8 22-2q12-6 22 2q14-2 18 10q18 4 12 22q-2 14-20 14H66q-16 0-18-14z" fill="#F5EBDD" stroke="#C9B497" stroke-width="2"/>
-        <rect x="82" y="78" width="36" height="66" rx="18" fill="#F5EBDD" stroke="#C9B497" stroke-width="2"/>`,
-      head: `
-        <ellipse cx="84" cy="38" rx="5" ry="11" fill="#EADBC4" stroke="#BFA88A" stroke-width="1.5" transform="rotate(-15 84 38)"/>
-        <ellipse cx="116" cy="38" rx="5" ry="11" fill="#EADBC4" stroke="#BFA88A" stroke-width="1.5" transform="rotate(15 116 38)"/>
-        <ellipse cx="100" cy="62" rx="26" ry="23" fill="#F8F0E6" stroke="#C9B497" stroke-width="2"/>
-        <g fill="#FFF8EE" stroke="#C9B497" stroke-width="1.5"><circle cx="88" cy="44" r="8"/><circle cx="112" cy="44" r="8"/><circle cx="100" cy="40" r="9"/></g>
-        <ellipse cx="100" cy="72" rx="12" ry="8" fill="#EADBC4"/>
-        <path d="M96 69q4 3 8 0M100 72v3M96 77q4 3 8 0" stroke="#5B4636" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-        ${eyes([[90, 60], [110, 60]], 3.4)}${blush([[83, 70], [117, 70]])}`
-    },
     llama: {
       anchors: { head: [100, 32, 0.54], eyes: [100, 52, 0.42], ears: [100, 50, 0.56], neck: [100, 96, 0.56], back: [100, 138, 0.9], lap: [52, 176, 0.7] },
       body: `
@@ -151,9 +134,6 @@
     "boina": { local: `<g transform="rotate(-8)"><ellipse cx="0" cy="-8" rx="42" ry="13" fill="#2E3A59" stroke="#1C2438" stroke-width="2"/><path d="M-36-6q36 10 72 0" stroke="#1C2438" stroke-width="2" fill="none"/><rect x="-2" y="-26" width="4" height="7" rx="2" fill="#1C2438"/></g>` },
     "striped-jersey": { global: (uid) => `<clipPath id="${uid}-jersey"><path d="M56 110q44-14 88 0l6 56q-50 14-100 0z"/></clipPath><path d="M56 110q44-14 88 0l6 56q-50 14-100 0z" fill="#fff" stroke="#5E8FB8" stroke-width="2"/><g clip-path="url(#${uid}-jersey)" fill="#74ACDF">${[60, 84, 108, 132].map((x) => `<rect x="${x}" y="96" width="12" height="80"/>`).join("")}</g>` },
 
-    "chullo": { local: `<path d="M-34 0q0-38 34-40q34 2 34 40z" fill="#C0392B" stroke="#7B241C" stroke-width="2"/><path d="M-33-10h66" stroke="#F1C40F" stroke-width="5"/><path d="M-30-10l6-5 6 5 6-5 6 5 6-5 6 5 6-5 6 5 6-5" stroke="#2E86AB" stroke-width="2" fill="none"/><path d="M-34 0l-2 20 10-4zM34 0l2 20-10-4z" fill="#C0392B" stroke="#7B241C" stroke-width="1.5"/><path d="M-32 18v10M32 18v10" stroke="#F1C40F" stroke-width="2"/><circle cx="0" cy="-42" r="6" fill="#F1C40F"/>` },
-    "andean-poncho": { global: `<path d="M52 134q48-24 96 0l8 24q-56 14-112 0z" fill="#8E44AD" stroke="#5B2C6F" stroke-width="2"/><path d="M48 146q52 14 104 0" stroke="#E74C3C" stroke-width="4" fill="none"/><path d="M47 153q53 14 106 0" stroke="#F1C40F" stroke-width="3" fill="none"/><path d="M84 128q16 8 32 0" stroke="#16A085" stroke-width="4" fill="none"/>` },
-    "woven-bag": { local: `<path d="M-16-6q16 22 32 0" stroke="#7B241C" stroke-width="2.5" fill="none"/><rect x="-11" y="10" width="22" height="20" rx="3" fill="#E74C3C" stroke="#7B241C" stroke-width="1.5"/><path d="M-11 17h22M-11 23h22" stroke="#F1C40F" stroke-width="2.5"/>` },
 
     "green-yellow-bandana": { local: `<path d="M-36-4q36 10 72 0l-36 32z" fill="#2E9E4F" stroke="#1E6E36" stroke-width="2"/><path d="M-30 0q30 8 60 0" stroke="#F6C343" stroke-width="3" fill="none"/>` },
     "tropical-flower": { local: `<g transform="translate(16 -6)">${[0, 72, 144, 216, 288].map((angle) => `<ellipse cx="0" cy="-9" rx="6" ry="10" fill="#F25C8E" transform="rotate(${angle})"/>`).join("")}<circle r="4" fill="#F6C343"/></g>` },

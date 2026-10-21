@@ -14,7 +14,6 @@
     { id: "capybara", country: "CO", slots: SLOTS },
     { id: "axolotl", country: "MX", slots: ["background", "back", "neck", "eyes", "head", "ears", "hand", "effect"] },
     { id: "carpincho", country: "AR", slots: SLOTS },
-    { id: "alpaca", country: "PE", slots: ["background", "back", "body", "neck", "eyes", "head", "ears", "effect"] },
     { id: "macaw", country: "BR", slots: ["background", "back", "neck", "eyes", "head", "ears", "hand", "effect"] },
     { id: "llama", country: "BO", slots: ["background", "back", "body", "neck", "eyes", "head", "ears", "effect"] }
   ];
@@ -51,9 +50,6 @@
     { id: "boina", slot: "head", species: ["carpincho"], unlock: { metric: "focusMinutes", count: 180 } },
     { id: "striped-jersey", slot: "body", species: ["carpincho"], unlock: { metric: "tasksCompleted", count: 3 } },
 
-    { id: "chullo", slot: "head", species: ["alpaca"], unlock: null },
-    { id: "andean-poncho", slot: "body", species: ["alpaca"], unlock: { metric: "focusSessions", count: 3 } },
-    { id: "woven-bag", slot: "neck", species: ["alpaca"], unlock: { metric: "tasksCompleted", count: 2 } },
 
     { id: "green-yellow-bandana", slot: "neck", species: ["macaw"], unlock: null },
     { id: "tropical-flower", slot: "head", species: ["macaw"], unlock: { metric: "focusSessions", count: 3 } },
@@ -71,7 +67,6 @@
     { id: "taco-break", species: "axolotl", items: ["taco", "sarape-scarf", "bg-papel-picado"] },
     { id: "mate-time", species: "carpincho", items: ["boina", "celeste-scarf", "mate-set"] },
     { id: "match-day", species: "carpincho", items: ["striped-jersey", "celeste-scarf"] },
-    { id: "highlands", species: "alpaca", items: ["chullo", "andean-poncho", "woven-bag", "bg-mountains"] },
     { id: "carnival-colors", species: "macaw", items: ["tropical-flower", "green-yellow-bandana", "pandeiro"] },
     { id: "altiplano", species: "llama", items: ["lluchu-hat", "aguayo-shawl", "chuspa-pouch", "bg-mountains"] },
     { id: "study-day", species: "*", items: ["round-glasses", "study-headphones", "school-backpack", "notebook", "bg-study-room"] }

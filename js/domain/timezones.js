@@ -13,11 +13,8 @@
     { id: "Etc/GMT+3", label: "UTC−3 (fixed)" },
     { id: "America/Argentina/Buenos_Aires", label: "Argentina — Buenos Aires (UTC−3)" },
     { id: "America/Sao_Paulo", label: "Brazil — São Paulo (UTC−3)" },
-    { id: "America/Santiago", label: "Chile — Santiago" },
-    { id: "America/Lima", label: "Peru — Lima (UTC−5)" },
     { id: "America/Bogota", label: "Colombia — Bogotá (UTC−5)" },
-    { id: "America/Mexico_City", label: "Mexico — Mexico City (UTC−6)" },
-    { id: "UTC", label: "UTC" }
+    { id: "America/Mexico_City", label: "Mexico — Mexico City (UTC−6)" }
   ];
 
   function localTimeZone() {

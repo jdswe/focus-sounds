@@ -92,7 +92,7 @@ No broken features were found (5 — none).
 5. Syllabus import: paste text or PDF → rule-based extraction with page references → review → approve → tasks.
 6. Study scheduler: availability windows, fixed classes/commitments, deadline-aware chunking, conflict warnings, approve/lock/regenerate.
 7. Notes with autosave and flashcards with SM-2 spaced repetition.
-8. Companion system: six species, slot/anchor compatibility, outfits, unlocks from real progress, animation states driven by app events.
+8. Companion system: five species (Colombia, Mexico, Argentina, Brazil, Bolivia), slot/anchor compatibility, outfits, unlocks from real progress, animation states driven by app events.
 9. Statistics, recommendations with reasons, optional non-repeating motivational messages.
 10. New ambient sounds (river, forest, café, library, rain on window) and saved soundscapes.
 11. Tests for all domain logic, documentation of blocked integrations.

@@ -16,22 +16,34 @@ test("a Bolivian 23:59 deadline is 22:59 the same day in Bogotá", () => {
   );
 });
 
-test("a UTC−3 23:59 deadline is 03:59 the next day in Madrid and the day shift is reported", () => {
-  const result = tz.convert("2026-11-20", "23:59", "Etc/GMT+3", "Europe/Madrid");
+test("a Bogotá 22:30 deadline is 00:30 the next day in São Paulo and the day shift is reported", () => {
+  const result = tz.convert("2026-11-20", "22:30", "America/Bogota", "America/Sao_Paulo");
   assert.equal(result.date, "2026-11-21");
-  assert.equal(result.time, "03:59");
+  assert.equal(result.time, "00:30");
   assert.equal(result.dayShift, 1);
+});
+
+test("a UTC−3 00:30 deadline is the previous evening in Mexico City", () => {
+  const result = tz.convert("2026-11-20", "00:30", "Etc/GMT+3", "America/Mexico_City");
+  assert.equal(result.date, "2026-11-19");
+  assert.equal(result.time, "21:30");
+  assert.equal(result.dayShift, -1);
 });
 
 test("same zone is a no-op and missing times are not converted", () => {
   assert.equal(tz.convert("2026-11-20", "08:00", "America/La_Paz", "America/La_Paz").time, "08:00");
-  assert.equal(tz.convert("2026-11-20", "", "America/La_Paz", "UTC"), null);
+  assert.equal(tz.convert("2026-11-20", "", "America/La_Paz", "America/Bogota"), null);
 });
 
-test("handles a DST zone as target", () => {
-  // São Paulo has no DST since 2019; New York does: 18:00 La Paz in July = 18:00 New York (both UTC−4).
-  assert.equal(tz.convert("2026-07-15", "18:00", "America/La_Paz", "America/New_York").time, "18:00");
-  assert.equal(tz.convert("2026-01-15", "18:00", "America/La_Paz", "America/New_York").time, "17:00");
+test("Buenos Aires and São Paulo are one hour ahead of Bolivia all year", () => {
+  assert.equal(tz.convert("2026-07-15", "18:00", "America/La_Paz", "America/Argentina/Buenos_Aires").time, "19:00");
+  assert.equal(tz.convert("2026-01-15", "18:00", "America/La_Paz", "America/Sao_Paulo").time, "19:00");
+});
+
+test("only the five supported countries (plus fixed UTC−3) are offered", () => {
+  assert.deepEqual(tz.PRESETS.map((zone) => zone.id), [
+    "America/La_Paz", "Etc/GMT+3", "America/Argentina/Buenos_Aires", "America/Sao_Paulo", "America/Bogota", "America/Mexico_City"
+  ]);
 });
 
 test("validates zone names", () => {

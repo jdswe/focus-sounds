@@ -16,7 +16,8 @@
 
   function currentLook() {
     const state = store().get();
-    const species = state.companion.species || "capybara";
+    // Unknown species (e.g. one removed from the catalog) fall back to the capybara.
+    const species = app.companions.getSpecies(state.companion.species).id;
     const equipped = app.companions.sanitizeEquipped(state.companion.equipped[species], species, counters());
     return { species, equipped };
   }
